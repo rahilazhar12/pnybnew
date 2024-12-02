@@ -28,7 +28,18 @@ app.use(express.json({ limit: "10mb" }));
 // CORS Middleware Configuration
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from this origin (frontend)
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://pnydb.vercel.app",
+      ];
+
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true); // Allow the request
+      } else {
+        callback(new Error("Not allowed by CORS"), false); // Reject the request
+      }
+    },
     credentials: true, // Enable sending cookies and credentials
     methods: "GET, POST, PUT, DELETE, OPTIONS", // Allow these methods
     allowedHeaders: "Content-Type, Authorization", // Allowed headers
